@@ -1,10 +1,10 @@
-IHh = buildIHh(model.Mesh);
-
-A = [eye(maxNodes); IHh'];
-B = [2*mesh.fineL*IHh*qOcta'; (mesh.L * qOcta.')];
-
-lambda = B\A;
-norms = vecnorm(lambda);
+% IHh = buildIHh(model.Mesh);
+% 
+% A = [eye(maxNodes); IHh'];
+% B = [2*mesh.fineL*IHh*qOcta'; (mesh.L * qOcta.')];
+% 
+% lambda = B\A;
+% norms = vecnorm(lambda);
 
 x = nodes(1, :)';
 y = nodes(2, :)';

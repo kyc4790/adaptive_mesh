@@ -1,6 +1,8 @@
+clc; clear;
+
 model = createpde('thermal', 'transient');
 importGeometry(model, 'tetrahedron.stl');
-generateMesh(model, 'Hmin', 1, 'GeometricOrder', 'quadratic');
+generateMesh(model, 'Hmin', 35, 'GeometricOrder', 'quadratic');
 
 nodes = model.Mesh.Nodes;
 elements = model.Mesh.Elements;
@@ -13,5 +15,5 @@ maxVertex = max(elements(1:4, :), [], 'all');
 mesh = buildMesh(model.Mesh);
 
 
-qOcta = MBO(mesh, OctaMBO, [], 1, 0);
-qOcta = OctaManopt(mesh, qOcta);
+qOcta1 = MBO(mesh, OctaMBO, [], 1, 0);
+qOcta = OctaManopt(mesh, qOcta1);
