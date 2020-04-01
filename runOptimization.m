@@ -1,19 +1,24 @@
-clc; clear;
-
 model = createpde('thermal', 'transient');
 importGeometry(model, 'tetrahedron.stl');
-generateMesh(model, 'Hmin', 35, 'GeometricOrder', 'quadratic');
+generateMesh(model, 'Hmin',15, 'GeometricOrder', 'quadratic');
 
-nodes = model.Mesh.Nodes;
-elements = model.Mesh.Elements;
-nodes = nodes - mean(nodes, 2);
+qOcta = [];
+old_cost = -1;
+epsilon = 1e-2;
 
-temp = size(nodes);
-maxNodes = temp(1, 2);
-maxVertex = max(elements(1:4, :), [], 'all');
+tic;
+while(1)
+    mesh = buildMesh(model.Mesh);
 
-mesh = buildMesh(model.Mesh);
+    [qOcta, ~, info] = MBO(mesh, OctaMBO, qOcta, 1, 0);
+    cost = info(length(info)).cost;
+    cost = cost / length(qOcta);
+    if abs((old_cost - cost)/ old_cost) < epsilon
+        break;
+    end
+    [~, costs, qOctaFine] = getLambda(model, mesh, qOcta);
+    [model, qOcta] = edgeSplit(model, costs, qOctaFine);
+    old_cost = cost;
+    fprintf("t = %3.3gs, average_cost = %3.6g, inner_iters=%d\n", toc, cost, length(info));
+end
 
-
-qOcta1 = MBO(mesh, OctaMBO, [], 1, 0);
-qOcta = OctaManopt(mesh, qOcta1);

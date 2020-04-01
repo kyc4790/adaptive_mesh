@@ -2,7 +2,7 @@ elements = model.Mesh.Elements;
 nodes = model.Mesh.Nodes;
 nodes = nodes - mean(nodes, 2);
 
-[lambda, norms] = getLambda(model, mesh, qOcta);
+[lambda, norms, qOctaFine] = getLambda(model, mesh, qOcta);
 tetCosts = mean(norms(elements))';
 
 [~, idx] = sort(tetCosts(:, :), 'descend');

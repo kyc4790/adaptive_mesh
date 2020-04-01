@@ -80,8 +80,8 @@ for k = 2:1000
     if saveIterates
         info(k).q = q;
     end
-    fprintf("t = %3.3gs, cost = %3.6g, delta = %3.3g, inner iters = %d\n", ...
-            info(k).time, info(k).cost, info(k).delta, iter);
+%     fprintf("t = %3.3gs, cost = %3.6g, delta = %3.3g, inner iters = %d\n", ...
+%             info(k).time, info(k).cost, info(k).delta, iter);
     
     if abs(info(k).costdelta / info(k).cost) < 1e-5 || info(k).delta / sqrt(sum(dot(q.', M * q.'))) < 1e-5
         break;
