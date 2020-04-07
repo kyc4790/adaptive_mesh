@@ -19,10 +19,10 @@ displacement = 0;
 % colors = eigvectors(:, 10);
 % colors = colors - min(colors) + eps;
 
-a = [1:maxVertex]'; b = num2str(a); c = cellstr(b);
-x = nodes(1, 1:maxVertex)';
-y = nodes(2, 1:maxVertex)';
-z = nodes(3, 1:maxVertex)';
+a = [1:maxNodes]'; b = num2str(a); c = cellstr(b);
+x = nodes(1, 1:maxNodes)';
+y = nodes(2, 1:maxNodes)';
+z = nodes(3, 1:maxNodes)';
 scatter3(x, y, z, 100, 'filled');
 hold on
 % fill3(reshape(nodes(1, elements(1:4, tet)), [], 4)', reshape(nodes(2, elements(1:4, tet)), [], 4)', reshape(nodes(3, elements(1:4, tet)), [], 4)', tet);
@@ -30,7 +30,7 @@ axis equal
 axis off
 set(gcf, 'color', 'w');
 % scatter3(x(s+1:maxNodes)', y(maxVertex+1:maxNodes)', z(maxVertex+1:maxNodes)');
-text(x+displacement, y+displacement, z+ displacement, c);
+% text(x+displacement, y+displacement, z+ displacement, c);
 patch('faces', edges, 'vertices', nodes');
 hold off
 

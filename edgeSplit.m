@@ -1,4 +1,4 @@
-function [newModel, newQ]=edgeSplit(model, costs, qOcta)
+function [newModel, newQ, newNodes, newElements]=edgeSplit(model, costs, qOcta)
 %% Setup
     elements = model.Mesh.Elements;
     nodes = model.Mesh.Nodes;
@@ -37,12 +37,12 @@ function [newModel, newQ]=edgeSplit(model, costs, qOcta)
     newTets = sum(tetSet, 'all');
 
     newQ = qOcta(:, oldToNew(1:(maxVertex + numEdgesPicked)));
-    newNodes = [nodes(:, oldToNew), zeros(3, numEdgesPicked * 2)];
+    newNodes = [nodes(:, oldToNew), zeros(3, numEdgesPicked * 3 + newTets)];
     newElements = [oldToNew(elements(:, find(1-tetSet)))'; zeros(10, 2 * newTets)']';
 
     index = numTets - newTets + 1;
+    edgeIndex = maxNodes;
     for i=1:numEdgesPicked
-        % not quite enough edges
         if pickedEdges(i) == 0
             break
         end
@@ -52,7 +52,9 @@ function [newModel, newQ]=edgeSplit(model, costs, qOcta)
         [idx, tets] = find(elements==edge);
         numNewTets = size(tets);
         numNewTets = numNewTets(1, 1);
-
+        vertices = unique(elements(1:4, tets)); % unique mapping!
+        numNewEdges = size(vertices, 1);
+        
         for j=1:numNewTets
             tet = tets(j);
             endpoints = [0, 0];
@@ -69,43 +71,68 @@ function [newModel, newQ]=edgeSplit(model, costs, qOcta)
                     endpoints = [2, 4];
                 case 10 
                     endpoints = [3, 4];
-            end
-            if elements(endpoints(1), tet) > elements(endpoints(2), tet)
-                endpoints = flip(endpoints);
-            end
-            
+            end            
 
-            newElements(:, index) = oldToNew(elements(:, tet));
-            newElements(:, index+1) = oldToNew(elements(:, tet));
-            newElements(endpoints(1), index) = newEdge;
-            newElements(endpoints(2), index+1) = newEdge;
-            newElements(idx(j), index) = 2*i + maxNodes - 1;
-            newElements(idx(j), index + 1) = 2*i + maxNodes;
-            
-            endpoints = elements(endpoints, tet);
-            newNodes(:, 2*i + maxNodes - 1) = mean([nodes(:, edge), nodes(:, endpoints(1))], 2);
-            newNodes(:, 2*i + maxNodes) = mean([nodes(:, edge), nodes(:, endpoints(2))], 2);
-            index = index + 2;
+            for endpoint=1:2
+                newElements(:, index) = oldToNew(elements(:, tet));
+                newElements(endpoints(endpoint), index) = newEdge;
+                correspondingVertex = 1:4;
+                correspondingVertex = find(correspondingVertex - endpoints(endpoint));                
+                correspondingEdge = zeros(1, 3);
+                switch(endpoints(endpoint))
+                    case 1
+                        correspondingEdge=[5, 7, 8];
+                    case 2
+                        correspondingEdge=[5, 6, 9];
+                    case 3
+                        correspondingEdge=[6, 7, 10];
+                        correspondingVertex=[2, 1, 4];
+                    case 4
+                        correspondingEdge=[8, 9, 10];
+                end
+                for elem=1:3
+                    edge_elem = find(vertices == elements(correspondingVertex(elem), tet));
+                    newElements(correspondingEdge(elem), index) = edgeIndex + edge_elem;
+                end
+                index = index + 1;
+            end            
         end
-
+        
+        for j=1:numNewEdges
+            edgeIndex = edgeIndex + 1;
+            newNodes(:, edgeIndex) = mean([nodes(:, vertices(j)), nodes(:, edge)], 2);
+        end
     end
+    newNodes=newNodes(:, 1:edgeIndex);
     newModel = createpde('thermal', 'transient');
     visualizeMesh(newNodes, newElements);
-    geometryFromMesh(newModel, newNodes, newElements);
+    try
+        geometryFromMesh(newModel, newNodes, newElements);
+    catch ME1
+        for iter=1:(numTets + newTets)
+            newModel = createpde('thermal', 'transient');
+            try
+                geometryFromMesh(newModel, newNodes, newElements(:, iter));
+            catch ME2
+                disp(iter);
+                disp(newElements(:, iter));
+            end
+        end
+        disp(ME1);
+    end
 end
 
 function [overlap, tetSet]=hasOverlap(tetSet, edge, elements)
     %% Checks for overlaps
     % checks that no tets in tetSet have an edge
     % if none, adds all tets bordering the edge to tetSet
-    numTets = sum(tetSet, 'all');
     tets = find(tetSet);
     
     subMat = elements(:, tets);
     
-    numNotEdge = size(find(subMat==edge));
-    numNotEdge = numNotEdge(1, 1);
-    if numNotEdge == 0
+    numEdge = size(find(subMat==edge));
+    numEdge = numEdge(1, 1);
+    if numEdge == 0
         overlap = 0;
         [~, idx] = find(elements==edge);
         tetSet(idx) = 1;            
