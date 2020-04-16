@@ -7,7 +7,7 @@ old_cost = -1;
 epsilon = 1e-2;
 
 tic;
-while(1)
+for i=1:20
     mesh = buildMesh(model.Mesh);
 
     [qOcta, ~, info] = MBO(mesh, OctaMBO, qOcta, 1, 0);

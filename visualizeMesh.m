@@ -18,7 +18,7 @@ displacement = 0;
 % [eigvectors, eigvalues] = eigs(FEM.K, 10, 'sm');
 % colors = eigvectors(:, 10);
 % colors = colors - min(colors) + eps;
-
+% maxNodes = 8;
 a = [1:maxNodes]'; b = num2str(a); c = cellstr(b);
 x = nodes(1, 1:maxNodes)';
 y = nodes(2, 1:maxNodes)';
