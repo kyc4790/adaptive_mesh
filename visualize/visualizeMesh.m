@@ -1,4 +1,4 @@
-function visualizeMesh(nodes, elements)
+function visualizeMesh(nodes, elements, colors)
 maxVertex = max(elements(1:4, :), [], 'all');
 temp = size(nodes);
 maxNodes = temp(1, 2);
@@ -23,7 +23,7 @@ a = [1:maxNodes]'; b = num2str(a); c = cellstr(b);
 x = nodes(1, 1:maxNodes)';
 y = nodes(2, 1:maxNodes)';
 z = nodes(3, 1:maxNodes)';
-scatter3(x, y, z, 100, 'filled');
+scatter3(x, y, z, 100, colors, 'filled');
 hold on
 % fill3(reshape(nodes(1, elements(1:4, tet)), [], 4)', reshape(nodes(2, elements(1:4, tet)), [], 4)', reshape(nodes(3, elements(1:4, tet)), [], 4)', tet);
 axis equal

@@ -2,13 +2,13 @@ function [d2g]=getHessianOfG(mesh)
     mats = struct2cell(load('OctaMat.mat'));
     
     numBoundary = size(mesh.bdryIdx, 1);
-    d2g = spalloc(9*mesh.nv*9*mesh.nv, numBoundary*8 + (mesh.nv-numBoundary)*15, 9*numBoundary + 81*(mesh.nv-numBoundary)*15);
+    numInt = size(mesh.intIdx, 1);
+    d2g = spalloc(9*mesh.nv*9*mesh.nv, numBoundary*8 + numInt*15, 9*numBoundary + 81*numInt*15);
 
     % first numBoundary constraints: |X|^2 - 1 => 2
     [rowIdx, toSet] = reformat(mesh.nv, mesh.bdryIdx, 2*eye(9));
     colIdx = reshape(repmat(1:numBoundary, 81, 1), [], 1);
     d2g(sub2ind(size(d2g), rowIdx, colIdx)) = toSet;
-    disp(size(find(d2g)));
     % next constraints: W_n x - c => no second deriv
 
     % next contraints: x' P_j x => 2*C
@@ -21,7 +21,6 @@ function [d2g]=getHessianOfG(mesh)
         [rowIdx, toSet] = reformat(mesh.nv, mesh.intIdx, C);
         colIdx = startInd + reshape(repmat(1:numInt, 81, 1), [], 1);
         d2g(sub2ind(size(d2g), rowIdx, colIdx)) = toSet;
-        disp(size(find(d2g)));
         startInd = startInd + numInt;
     end
 

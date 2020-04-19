@@ -3,7 +3,9 @@ function [dg]=getDerivOfG(mesh, qOcta)
     
     qFlattened = reshape(qOcta, 1, []);
     numBoundary = size(mesh.bdryIdx, 1);
-    dg = spalloc(9*mesh.nv, numBoundary*8 + (mesh.nv-numBoundary)*15, 9*(numBoundary*8 + (mesh.nv-numBoundary)*15));
+    numInt = size(mesh.intIdx, 1);
+    nv = mesh.nv;
+    dg = spalloc(9*nv, numBoundary*8 + numInt*15, 9*(numBoundary*8 + numInt*15));
 
     % first numBoundary constraints: |X|^2 - 1
     rowIdx = reshape((repmat((mesh.bdryIdx-1)*9, 1, 9) + repmat(1:9, numBoundary, 1))', [], 1);
@@ -22,7 +24,6 @@ function [dg]=getDerivOfG(mesh, qOcta)
 
     % next contraints: x' P_j x
     startInd = 8*numBoundary;
-    numInt = size(mesh.intIdx, 1);
 
     for i=1:15
         P = mats{i};
