@@ -1,6 +1,6 @@
 model = createpde('thermal', 'transient');
 importGeometry(model, 'tetrahedron.stl');
-generateMesh(model, 'Hmin',15, 'GeometricOrder', 'quadratic');
+generateMesh(model, 'Hmin',35, 'GeometricOrder', 'quadratic');
 
 qOcta = [];
 old_cost = -1;
