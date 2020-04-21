@@ -20,12 +20,7 @@ dgEdge = getDerivOfG(meshEdge, qFine);
 dotProd = lambdaH*d2g';
 dotProd = reshape(dotProd, mesh.nv*9, []);
 
-d2f = sparse(9*mesh.nv, 9*mesh.nv);
-
-inds = ((1:mesh.nv)-1)*9;
-for i=1:9
-     d2f(inds+i, inds+i) = mesh.fineL;
-end
+d2f = getHessianOfF(mesh, qOcta);
 
 numConstraintsCoarse = size(dg, 2);
 numConstraintsFine = size(dgEdge, 2);
@@ -41,14 +36,14 @@ M = [2 * B'*B, constMat'];
 xComb = C \ M;
 dLambda = xComb((numTotal - numConstraintsFine + 1):end);
 
-numIntFine = size(meshFine.intIdx, 1);
-numBdryFine = size(meshFine.bdryIdx, 1);
+numIntFine = size(meshEdge.intIdx, 1);
+numBdryFine = size(meshEdge.bdryIdx, 1);
 
 dLambdaBdry = reshape(dLambda(1:(numBdryFine*8))', numBdryFine, []);
 dLambdaInt = reshape(dLambda((numBdryFine*8 + 1):(numBdryFine*8+numIntFine*15))', numIntFine, []);
 
 edgeCosts = zeros(mesh.nv, 1);
-edgeCosts(meshFine.bdryIdx) = vecnorm(dLambdaBdry, 2, 2);
-edgeCosts(meshFine.intIdx) = vecnorm(dLambdaInt, 2, 2);
+edgeCosts(meshEdge.bdryIdx) = vecnorm(dLambdaBdry, 2, 2);
+edgeCosts(meshEdge.intIdx) = vecnorm(dLambdaInt, 2, 2);
 
 

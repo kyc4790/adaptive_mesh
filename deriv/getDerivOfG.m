@@ -44,7 +44,7 @@ function [dg]=getDerivOfG(mesh, qOcta)
 
     function [result]=getDot(normalVec)
         [Lx, Ly, Lz] = getAngularMomentumMatrices();
-        result = expm(normalVec(1) * Lx + normalVec(2) * Ly + normalVec(3) * Lz);
+        result = expm(-1*(normalVec(1) * Lx + normalVec(2) * Ly + normalVec(3) * Lz));
         result = result(2:8, :);
         result = reshape(result, 1, []);
     end

@@ -18,7 +18,7 @@ function [d2g]=getHessianOfG(mesh)
     for i=1:15
         P = mats{i};
         C = P(2:10, 2:10);
-        [rowIdx, toSet] = reformat(mesh.nv, mesh.intIdx, C);
+        [rowIdx, toSet] = reformat(mesh.nv, mesh.intIdx, 2*C);
         colIdx = startInd + reshape(repmat(1:numInt, 81, 1), [], 1);
         d2g(sub2ind(size(d2g), rowIdx, colIdx)) = toSet;
         startInd = startInd + numInt;
@@ -31,7 +31,7 @@ function [d2g]=getHessianOfG(mesh)
         numInds = size(inds, 1);
         preTranspose = repmat(preTranspose', 1, numInds);
         indsRep = repmat(inds, 1, 81);
-        indsRep = (reshape(indsRep', 9, [])-1)*(nv*9+1);
+        indsRep = (reshape(indsRep', 9, [])-1)*(nv*9*9 + 9);
         idx = reshape(indsRep + preTranspose, [], 1);
         
         toSet=repmat(reshape(mat', 1, []), 1, numInds);

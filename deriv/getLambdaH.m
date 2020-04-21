@@ -6,7 +6,7 @@
 % qOcta = MBO(mesh, OctaMBO, [], 1, 0);
 
 function [lambdaH]=getLambdaH(mesh, qOcta, dg)
-    Bflattened = 2*reshape((mesh.fineL*qOcta')', [], 1);
+    Bflattened = getDerivOfF(mesh, qOcta);
     if nargin < 3 || isempty(dg)
         dg = getDerivOfG(mesh, qOcta);
     end
