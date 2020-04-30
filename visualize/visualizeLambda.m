@@ -13,8 +13,8 @@ plotData = struct();
 plotData.x = x;
 plotData.y = y;
 plotData.z = z;
-plotData.colors = norms + eps;
-scatter3(x, y, z, 100, norms + eps, 'filled');
+plotData.colors = costs;
+scatter3(x, y, z, 100, plotData.colors, 'filled');
 hold on
 axis equal
 axis off

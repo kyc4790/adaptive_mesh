@@ -43,7 +43,10 @@ deltas2 = deltas.*withNormals(:, 2);
 deltas3 = deltas.*withNormals(:, 3);
 deltas4 = deltas.*withNormals(:, 4);
 
-withNormals = [mean(deltas2); mean(deltas3); mean(deltas4)];
+[~, firstFaceIdx] = max(abs(deltas2) + abs(deltas2) + abs(deltas2));
+firstFaceIdxes = sub2ind(size(deltas2), firstFaceIdx, 1:maxVertex);
+
+withNormals = [deltas2(firstFaceIdxes); deltas3(firstFaceIdxes); deltas4(firstFaceIdxes)];
 norms = vecnorm(withNormals);
 bdryIdx = find(norms)';
 intIdx = find(~norms)';

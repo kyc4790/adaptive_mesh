@@ -3,10 +3,10 @@ function [d2g]=getHessianOfG(mesh)
     
     numBoundary = size(mesh.bdryIdx, 1);
     numInt = size(mesh.intIdx, 1);
-    d2g = spalloc(9*mesh.nv*9*mesh.nv, numBoundary*8 + numInt*15, 9*numBoundary + 81*numInt*15);
+    d2g = spalloc(9*mesh.newnv*9*mesh.newnv, numBoundary*8 + numInt*15, 9*numBoundary + 81*numInt*15);
 
     % first numBoundary constraints: |X|^2 - 1 => 2
-    [rowIdx, toSet] = reformat(mesh.nv, mesh.bdryIdx, 2*eye(9));
+    [rowIdx, toSet] = reformat(mesh.newnv, mesh.bdryIdx, 2*eye(9));
     colIdx = reshape(repmat(1:numBoundary, 81, 1), [], 1);
     d2g(sub2ind(size(d2g), rowIdx, colIdx)) = toSet;
     % next constraints: W_n x - c => no second deriv
@@ -18,7 +18,7 @@ function [d2g]=getHessianOfG(mesh)
     for i=1:15
         P = mats{i};
         C = P(2:10, 2:10);
-        [rowIdx, toSet] = reformat(mesh.nv, mesh.intIdx, 2*C);
+        [rowIdx, toSet] = reformat(mesh.newnv, mesh.intIdx, 2*C);
         colIdx = startInd + reshape(repmat(1:numInt, 81, 1), [], 1);
         d2g(sub2ind(size(d2g), rowIdx, colIdx)) = toSet;
         startInd = startInd + numInt;

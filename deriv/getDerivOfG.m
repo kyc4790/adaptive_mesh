@@ -4,7 +4,7 @@ function [dg]=getDerivOfG(mesh, qOcta)
     qFlattened = reshape(qOcta, 1, []);
     numBoundary = size(mesh.bdryIdx, 1);
     numInt = size(mesh.intIdx, 1);
-    nv = mesh.nv;
+    nv = mesh.newnv;
     dg = spalloc(9*nv, numBoundary*8 + numInt*15, 9*(numBoundary*8 + numInt*15));
 
     % first numBoundary constraints: |X|^2 - 1
