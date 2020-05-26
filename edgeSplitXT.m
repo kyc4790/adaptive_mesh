@@ -1,17 +1,3 @@
-% model = createpde('thermal', 'transient');
-% importGeometry(model, 'tetrahedron.stl');
-% generateMesh(model, 'Hmin',15, 'GeometricOrder', 'quadratic');
-% 
-% qOcta = [];
-% 
-% mesh = buildMesh(model.Mesh);
-% 
-% [qOcta, ~, info] = MBO(mesh, OctaMBO, qOcta, 1, 0);
-% cost = info(length(info)).cost; 
-% cost = cost / length(qOcta);
-% [~, costs, qOcta] = getLambda(model, mesh, qOcta);
-% qOcta = qOctaFine;
-
 function [newModel, newQ, newNodes, newElements]=edgeSplitXT(model, costs, qOcta)
     %% Setup
     elements = model.Mesh.Elements;
