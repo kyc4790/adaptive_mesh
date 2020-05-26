@@ -1,6 +1,6 @@
 model = createpde('thermal', 'transient');
-importGeometry(model, 'tetrahedron.stl');
-generateMesh(model, 'Hmin',15, 'GeometricOrder', 'quadratic');
+importGeometry(model, 'cylinder.stl');
+generateMesh(model, 'Hmax',5, 'GeometricOrder', 'quadratic');
 
 mesh = buildMesh(model.Mesh);
 qOcta = MBO(mesh, OctaMBO, [], 1, 0);

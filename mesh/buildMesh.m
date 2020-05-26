@@ -37,5 +37,8 @@ function MBOmesh = buildMesh(mesh)
     MBOmesh.eigvalues = eigvalues;
     MBOmesh.eigvectors = eigvectors;
     
+    warning('off', 'MATLAB:triangulation:PtsNotInTriWarnId');
     MBOmesh.tetra = triangulation(mesh.Elements(1:4, :)', nodes');
+    warning('on', 'MATLAB:triangulation:PtsNotInTriWarnId');
+
 end

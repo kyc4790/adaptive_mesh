@@ -108,17 +108,11 @@ function [newModel, newQ, newNodes, newElements]=edgeSplitXT(model, costs, qOcta
     newElements = [newElements; newEdges];
     newNodes = [newNodes, reshape(mean(reshape(newNodes(:, data.edges), [], 2), 2), 3, [])];
     
-    for i=1:size(newElements, 2)
-        newModel = createpde('thermal', 'transient');
-        try
-            geometryFromMesh(newModel, newNodes, newElements(:, i));
-        catch ME1
-            disp(i);
-        end
-    end
     newModel = createpde('thermal', 'transient');
     try
+        warning('off', 'pde:PDEModel:NodesNotInMeshWarnId');
         geometryFromMesh(newModel, newNodes, newElements);
+        warning('on', 'pde:PDEModel:NodesNotInMeshWarnId');
     catch
         disp('hola');
     end

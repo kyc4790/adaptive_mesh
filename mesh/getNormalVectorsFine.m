@@ -59,7 +59,7 @@ deltas3 = deltas.*withNormals(:, 3);
 deltas4 = deltas.*withNormals(:, 4);
 
 [~, firstFaceIdx] = max(abs(deltas2) + abs(deltas2) + abs(deltas2));
-firstFaceIdxes = sub2ind(size(deltas2), firstFaceIdx, 1:maxVertex);
+firstFaceIdxes = sub2ind(size(deltas2), firstFaceIdx, 1:maxNodes);
 
 withNormals = [deltas2(firstFaceIdxes); deltas3(firstFaceIdxes); deltas4(firstFaceIdxes)];
 norms = vecnorm(withNormals);
