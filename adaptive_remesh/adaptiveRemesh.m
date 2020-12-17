@@ -61,7 +61,7 @@ function [qOcta, model, info]=adaptiveRemesh(model, qOcta, saveIterates, epsilon
             numIterates = 1000;
         end
 
-        [qOcta, ~, inner_info] = MBO(mesh, OdecoMBO, qOcta, 1, 0, false, 1000);
+        [qOcta, ~, inner_info] = MBO(mesh, OctaMBO, qOcta, 1, 0, false, 1000);
         cost = inner_info(length(inner_info)).cost; 
 %         cost = cost;
         
@@ -76,7 +76,6 @@ function [qOcta, model, info]=adaptiveRemesh(model, qOcta, saveIterates, epsilon
         
         fprintf("t = %3.3gs, cost = %3.6g, inner_iters=%d\n", info(i).inner_time, cost, length(inner_info));
 
-        
         if abs((old_cost - cost)/ old_cost) < epsilon
             fprintf("exited via break\n");
             break;

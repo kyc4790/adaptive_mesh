@@ -17,13 +17,18 @@ function [g]=getG(mesh, q)
     g(1:numBdry) = diag(q(inds, mesh.bdryIdx)' * q(inds, mesh.bdryIdx)) - 1;
     
     %W_n x - constant
-    normalVecs = num2cell(mesh.bdryNormals, 2);
-    W = cellfun(@(x) getDot(x), normalVecs, 'UniformOutput', false);
-    wnx = cell2mat(W)*q(inds, mesh.bdryIdx);
-    constant = zeros(7, 1);
-    constant(4) = sqrt(7/12);
+    mat = OctaAlignMat(mesh.bdryNormals);
+    W = multiprod(multitransp(mat), sparse(2:8, 1:7, ones(1, 7), 9, 7));
+    res = multiprod(multitransp(W), q(1:9, mesh.bdryIdx));
+    q_inds = repelem(1:numBdry, 7, 1);
+    const_inds = repelem(1:7, numBdry, 1)'; 
+    inds = sub2ind(size(res), const_inds, q_inds, q_inds);
+    b = [0 0 0 sqrt(7/12) 0 0 0]';
+    B = repmat(b, 1, numBdry);
+    vals = res(inds) - B;
+    
     for i=1:7
-        g(numBdry + i + (1:numBdry)*7 - 7) = wnx(sub2ind(size(wnx), 7*(1:numBdry) - 7 + i, 1:numBdry)) - constant(i);
+        g(numBdry + i + (1:numBdry)*7 - 7) = vals(i, :);
     end
     
     % x^TPx
