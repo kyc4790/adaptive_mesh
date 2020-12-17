@@ -28,7 +28,7 @@ if nargin < 3
     colors = sparse(1, maxNodes);
 end
 
-scatter3(x, y, z, 10, colors, 'filled');
+% scatter3(x, y, z, 10, colors, 'filled');
 
 hold on
 % fill3(reshape(nodes(1, elements(1:4, tet)), [], 4)', reshape(nodes(2, elements(1:4, tet)), [], 4)', reshape(nodes(3, elements(1:4, tet)), [], 4)', tet);
@@ -37,7 +37,7 @@ axis off
 set(gcf, 'color', 'w');
 % scatter3(x(s+1:maxNodes)', y(maxVertex+1:maxNodes)', z(maxVertex+1:maxNodes)');
 % text(x+displacement, y+displacement, z+ displacement, c);
-patch('faces', edges, 'vertices', nodes');
+patch('faces', edges, 'vertices', nodes', 'LineWidth', 0.25, 'EdgeAlpha', 0.25);
 hold off
 
 end

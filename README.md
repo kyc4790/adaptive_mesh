@@ -27,6 +27,31 @@ For more information on the runs, run
     [q, model, info] = adaptiveRemesh(model, [], true)
 ```
 
+As an example, look at run/runOptimization.m
+
+### Pushing Singularities Outward
+
+#### Weighting the L and M matrices
+Build a weighted mesh by running 
+```matlab
+    weightedMesh = buildWeightedMesh(model)
+```
+
+Adjust the weights as needed by calling
+```matlab
+    adjustWeights(model.Mesh, weightedMesh, @x x.^2);
+```
+for example, to square the weights. Then, run normal MBO.
+
+For more information, look at run/runVariation.m
+
+#### Relaxed Boundary MBO
+Call MBO as follows:
+```matlab
+[q, ~, info] = MBO(mesh, OctaMBO, [], 1, 0, true, 1000, alpha);
+```
+where ```alpha``` is the parameter in the relaxed boundary MBO. (An ```alpha``` of zero would correspond to the unrelaxed version.)
+
 ### Visualization
 
 #### Visualizing a Mesh from a Model
@@ -49,3 +74,12 @@ Alternatively, to compare the first and last models of a split, alongside the si
     overlay(info)
 ```
 Note this only works if ```adaptiveRemesh``` was called with the third argument set to ```true```.
+
+
+#### Visualizing a Sequence of Adaptive Remeshes
+
+Call ```VisualizeSequence(info)```
+
+#### Visualize a Sequence of 
+
+Set a variable ```all_info``` such that ```all_info(j).i``` is equal to the ```info``` output from MBO with saveIterates as on. Then, call ```visualizeVariation(all_info)```.

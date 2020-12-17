@@ -4,9 +4,19 @@
 
 Contains various ```.stl``` files to be loaded into the mdoel.
 
-## buildMesh.m
+## Mesh conversion
 
-Converts a mesh from ```model.Mesh``` to the type accepted by both the constraint solver and MBO.
+### assignModel.m
+
+Builds a model from an FEMesh.
+
+### buildMesh.m
+
+Converts a mesh from ```model.Mesh``` to the type accepted by both the constraint solver and MBO (an MBOMesh).
+
+### getModel.m 
+
+Builds an FEMesh from a gmsh-exported MATLAB file 
 
 ## Normal Vectors
 

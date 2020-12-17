@@ -1,4 +1,4 @@
-function [withNormals, bdryIdx, intIdx, bdry]= getNormalVectorsCoarse(mesh)
+function [normals, bdryIdx, intIdx, bdry]= getNormalVectorsCoarse(mesh)
 
 elements = mesh.Elements;
 nodes = mesh.Nodes;
@@ -35,22 +35,26 @@ withNormals = sortrows(withNormals);
 indexes = withNormals(:, 1);
 
 
-toKroneckerDelta1 = repmat(indexes, 1, maxVertex);
-temp = size(indexes);
-toKroneckerDelta2 = repmat(1:maxVertex, temp(1, 1), 1);
-deltas = (toKroneckerDelta1 == toKroneckerDelta2);
-deltas2 = deltas.*withNormals(:, 2);
-deltas3 = deltas.*withNormals(:, 3);
-deltas4 = deltas.*withNormals(:, 4);
+% toKroneckerDelta1 = repmat(indexes, 1, maxVertex);
+% temp = size(indexes);
+% toKroneckerDelta2 = repmat(1:maxVertex, temp(1, 1), 1);
+% deltas = (toKroneckerDelta1 == toKroneckerDelta2);
+% deltas2 = deltas.*withNormals(:, 2);
+% deltas3 = deltas.*withNormals(:, 3);
+% deltas4 = deltas.*withNormals(:, 4);
+% 
+% [~, firstFaceIdx] = max(abs(deltas2) + abs(deltas2) + abs(deltas2));
+% firstFaceIdxes = sub2ind(size(deltas2), firstFaceIdx, 1:maxVertex);
+% 
+% withNormals = [deltas2(firstFaceIdxes); deltas3(firstFaceIdxes); deltas4(firstFaceIdxes)];
 
-[~, firstFaceIdx] = max(abs(deltas2) + abs(deltas2) + abs(deltas2));
-firstFaceIdxes = sub2ind(size(deltas2), firstFaceIdx, 1:maxVertex);
-
-withNormals = [deltas2(firstFaceIdxes); deltas3(firstFaceIdxes); deltas4(firstFaceIdxes)];
-norms = vecnorm(withNormals);
+normals = zeros(maxVertex, 3);
+normals(indexes, :) = normals(indexes, :) + withNormals(:, 2:4);
+normals = normals';
+norms = vecnorm(normals);
 bdryIdx = find(norms)';
 intIdx = find(~norms)';
-withNormals = (withNormals./norms)';
+normals = (normals./norms)';
 
 idxToBdryIdx = cumsum(norms > 0);
 

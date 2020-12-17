@@ -1,0 +1,32 @@
+tets = model.Mesh.Elements(1:4, :)';
+vertices = model.Mesh.Nodes';
+
+T = triangulation(tets, vertices);
+[C, r] = incenter(T);
+edge_1 = vecnorm(model.Mesh.Nodes(:, (model.Mesh.Elements(1, :))) - model.Mesh.Nodes(:, (model.Mesh.Elements(2, :))));
+edge_2 = vecnorm(model.Mesh.Nodes(:, (model.Mesh.Elements(1, :))) - model.Mesh.Nodes(:, (model.Mesh.Elements(3, :))));
+edge_3 = vecnorm(model.Mesh.Nodes(:, (model.Mesh.Elements(1, :))) - model.Mesh.Nodes(:, (model.Mesh.Elements(4, :))));
+edge_4 = vecnorm(model.Mesh.Nodes(:, (model.Mesh.Elements(2, :))) - model.Mesh.Nodes(:, (model.Mesh.Elements(3, :))));
+edge_5 = vecnorm(model.Mesh.Nodes(:, (model.Mesh.Elements(2, :))) - model.Mesh.Nodes(:, (model.Mesh.Elements(4, :))));
+edge_6 = vecnorm(model.Mesh.Nodes(:, (model.Mesh.Elements(3, :))) - model.Mesh.Nodes(:, (model.Mesh.Elements(4, :))));
+tet_length = max([edge_1; edge_2; edge_3; edge_4; edge_5; edge_6]);
+tet_ratios = r./tet_length';
+[sorted, idx] = sort(tet_ratios);
+numSorted = size(sorted, 1);
+numSelected = numSorted * 0.1;
+tetramesh(tets(idx(1:numSelected), :), vertices, tet_ratios(idx(1:numSelected), :), 'FaceAlpha',0.05, 'EdgeColor', 'none');
+
+T = triangulation(tets', vertices');
+[~, r] = incenter(T);
+edge_1 = vecnorm(vertices(:, (tets(1, :))) - vertices(:, (tets(2, :))));
+edge_2 = vecnorm(vertices(:, (tets(1, :))) - vertices(:, (tets(3, :))));
+edge_3 = vecnorm(vertices(:, (tets(1, :))) - vertices(:, (tets(4, :))));
+edge_4 = vecnorm(vertices(:, (tets(2, :))) - vertices(:, (tets(3, :))));
+edge_5 = vecnorm(vertices(:, (tets(2, :))) - vertices(:, (tets(4, :))));
+edge_6 = vecnorm(vertices(:, (tets(3, :))) - vertices(:, (tets(4, :))));
+tet_length = max([edge_1; edge_2; edge_3; edge_4; edge_5; edge_6]);
+tet_ratios = r./tet_length';
+[sorted, idx] = sort(tet_ratios);
+numSorted = size(sorted, 1);
+numSelected = numSorted * 0.1;
+tetramesh(tets(:, idx(1:numSelected))', vertices', tet_ratios(idx(1:numSelected), :), 'FaceAlpha',0.05, 'EdgeColor', 'none');

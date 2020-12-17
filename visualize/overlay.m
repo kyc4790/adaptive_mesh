@@ -1,5 +1,10 @@
-function overlay(info)
+function overlay(info, first, second)
     length = size(info, 2);
-    VisualizeResult(info(length).mesh, info(length).q);
-    compareMesh(info(1).model, info(length-1).model);
+    if(nargin < 3)
+        first = 1;
+        second = length - 1;
+    end
+        
+    VisualizeResult(info(second).mesh, info(second).q);
+    compareMesh(info(first).model, info(second).model, 0);
 end

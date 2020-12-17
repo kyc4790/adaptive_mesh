@@ -1,4 +1,9 @@
-function [q, q0, info] = MBO(meshData, fiber, q0, tauMult, tauExponent, saveIterates)
+function [q, q0, info] = MBO(meshData, fiber, q0, tauMult, tauExponent, saveIterates, numIterates, alpha)
+% Modified version of MBO from arff
+% @param alpha  the alpha to use in the version with relaxed boundary
+%               constraints
+% @param numIterates the number of iterates to run MBO for
+
 %% Diffusion-generated algorithm for variety-valued maps.
 
 nv = meshData.nv;
@@ -40,6 +45,10 @@ if nargin < 6
     saveIterates = false;
 end
 
+if nargin < 7
+    numIterates = 1000;
+end
+
 q = q0;
 warmstart = [];
 qProj = zeros(size(q));
@@ -55,7 +64,7 @@ if saveIterates
 end
 
 tic;
-for k = 2:1000
+for k = 2:numIterates
     info(k).tau = tau0 / (k - 1)^tauExponent;
     A = M + info(k).tau * L;
     
@@ -65,9 +74,15 @@ for k = 2:1000
         bdryIdx, bdryBasis, qFixed, warmstart);
     
     % Project
-    qDiffBdry = multiprod(multitransp(bdryBasis), qDiffused(:, bdryIdx) - bdryFixed, [1 2], 1);
-    qProjBdry = fiber.projAligned(qDiffBdry);
-    qProj(:, bdryIdx) = multiprod(bdryBasis, qProjBdry, [1 2], 1) + bdryFixed;
+    if nargin < 8
+        qDiffBdry = multiprod(multitransp(bdryBasis), qDiffused(:, bdryIdx) - bdryFixed, [1 2], 1);
+        qProjBdry = fiber.projAligned(qDiffBdry);
+        qProj(:, bdryIdx) = multiprod(bdryBasis, qProjBdry, [1 2], 1) + bdryFixed;
+    else
+        % use relaxed version
+        qProj(:, bdryIdx) = projBoundary(alpha, bdryNormals, qDiffused(:, bdryIdx));
+        fprintf("relaxed %f\n", toc);
+    end
     qProj(:, intIdx) = fiber.proj(qDiffused(:, intIdx));
     
     % Compute Statistics

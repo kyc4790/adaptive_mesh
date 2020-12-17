@@ -1,11 +1,11 @@
 function [edgeCosts, qFine, dLambda]=getDerivConstraint(model, mesh, qOcta)
     mesh.newnv = size(model.Mesh.Nodes, 2);
-    dg = getDerivOfG(mesh, qOcta);
-    d2g = getHessianOfG(mesh);
+%     dg = getDerivOfG(mesh, qOcta);
+%     d2g = getHessianOfG(mesh);
 
     IHh = buildIHh(model.Mesh);
     qFine = (IHh*qOcta')';
-    lambdaH = sparse(getLambdaH(mesh, qFine, dg));
+%     lambdaH = sparse(getLambdaH(mesh, qFine, dg));
 
     numBdry = size(mesh.bdryIdx, 1);
     numInt = size(mesh.intIdx, 1);
@@ -15,7 +15,7 @@ function [edgeCosts, qFine, dLambda]=getDerivConstraint(model, mesh, qOcta)
     meshEdge.bdryIdx = mesh.bdryIdxFine(numBdry+1:end, :);
     meshEdge.intIdx = mesh.intIdxFine(numInt+1:end, :);
     meshEdge.bdryNormals = mesh.bdryNormalsFine(numBdry+1:end, :);
-    dgEdge = getDerivOfG(meshEdge, qFine);
+%     dgEdge = getDerivOfG(meshEdge, qFine);
 % 
 %     dotProd = lambdaH*d2g';
 %     dotProd = reshape(dotProd, mesh.newnv*9, []);
@@ -66,9 +66,13 @@ function [edgeCosts, qFine, dLambda]=getDerivConstraint(model, mesh, qOcta)
 %     dLambda = xComb((numTotal - numConstraintsFine + 1):numTotal);
 %     
 %     checkEnvelopeTheorem(meshEdge, qFine, dLambda);
+    numInteriorConstraints = 27;
+    if(size(qOcta, 1) == 9)
+        numInteriorConstraints = 15;
+    end
     
     dLambdaBdry = reshape(dLambda(1:(numBdryFine*8))', numBdryFine, []);
-    dLambdaInt = reshape(dLambda((numBdryFine*8 + 1):(numBdryFine*8+numIntFine*15))', numIntFine, []);
+    dLambdaInt = reshape(dLambda((numBdryFine*8 + 1):(numBdryFine*8+numIntFine*numInteriorConstraints))', numIntFine, []);
 
     edgeCosts = zeros(mesh.newnv, 1);
     edgeCosts(meshEdge.bdryIdx) = vecnorm(dLambdaBdry, 2, 2);

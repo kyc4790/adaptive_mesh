@@ -3,6 +3,9 @@
 ## pastRuns/
 A folder containing relevant past runs, stored as the ```info``` variable in ```.mat``` files.
 
+## getSplitDiff.m
+Runs a single round of edge splitting. Used to test that edge splitting works as intended.
+
 ## runOptimization.m
 
 Sample code for building and running. Currently, it is an example of extending an existing ```info``` variable, and visualizing it using ```compareMesh```.
